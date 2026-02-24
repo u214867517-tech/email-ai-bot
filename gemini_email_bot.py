@@ -5,6 +5,7 @@ import smtplib
 import requests
 from email.mime.text import MIMEText
 
+# --- הגדרות שרת וסודות מ-GitHub ---
 IMAP_SERVER = "imap.gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
 EMAIL_ACCOUNT = os.getenv("EMAIL_ACCOUNT")
@@ -55,7 +56,7 @@ def send_email(to_email, subject, body_text):
     try:
         print(f"[*] שולח תגובה אל: {to_email}...")
         formatted_text = body_text.replace('\n', '<br>')
-        html_body = f"<html><body dir='rtl'>{formatted_text}</body></html>"
+        html_body = f"<html><body dir='rtl' style='text-align: right; font-family: Arial, sans-serif;'>{formatted_text}</body></html>"
         msg = MIMEText(html_body, _subtype='html', _charset='utf-8')
         msg['From'] = EMAIL_ACCOUNT
         msg['To'] = to_email
@@ -75,10 +76,14 @@ def get_gemini_reply(prompt):
              
         print("[*] שולח בקשה לבינה המלאכותית...")
         
+        # כתובת תקינה לחלוטין למודל Flash המהיר
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-        
         headers = {"Content-Type": "application/json"}
-        data = {"contents": [{"parts": [{"text": "תענה למייל הבא בעברית (ללא נושא, רק גוף התשובה). המייל:\n" + prompt}]}]}
+        
+        # >>> כאן נמצא התיקון לחתימה! <<<
+        bot_instruction = "אתה עוזר וירטואלי חכם. ענה למייל הבא בעברית. אל תכתוב את המילה 'נושא' או 'הנדון' בתשובה שלך. בסוף כל תשובה, רד שורה וחתום תמיד בדיוק במילים אלו: 'בברכה, כשרג'ים'. הנה תוכן המייל שאליו עליך להשיב:\n"
+        
+        data = {"contents": [{"parts": [{"text": bot_instruction + prompt}]}]}
         response = requests.post(url, headers=headers, json=data)
         
         if response.status_code == 200:
