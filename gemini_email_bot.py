@@ -74,7 +74,9 @@ def get_gemini_reply(prompt):
              return "שגיאת מערכת: מפתח API חסר."
              
         print("[*] שולח בקשה לבינה המלאכותית...")
-        url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=){GEMINI_API_KEY}"
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+        
         headers = {"Content-Type": "application/json"}
         data = {"contents": [{"parts": [{"text": "תענה למייל הבא בעברית (ללא נושא, רק גוף התשובה). המייל:\n" + prompt}]}]}
         response = requests.post(url, headers=headers, json=data)
@@ -106,5 +108,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
